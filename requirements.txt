@@ -3,6 +3,7 @@ Django==4.1.7
 django-cors-headers==3.14.0
 django-environ==0.10.0
 environ==1.0
+gunicorn==20.1.0
 imageio==2.26.0
 imutils==0.5.4
 lazy_loader==0.1
@@ -14,6 +15,6 @@ Pillow==9.4.0
 python-decouple==3.8
 PyWavelets==1.4.1
 scikit-image==0.20.0
-scipy
+scipy==1.10.1
 sqlparse==0.4.3
 tifffile==2023.2.28
