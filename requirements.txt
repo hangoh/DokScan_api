@@ -10,7 +10,7 @@ lazy_loader==0.1
 networkx==3.0
 numpy==1.24.2
 
-pencv-python-headless
+opencv-python-headless
 packaging==23.0
 Pillow==9.4.0
 python-decouple==3.8
