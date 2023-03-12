@@ -18,4 +18,4 @@ scikit-image==0.20.0
 scipy==1.10.1
 sqlparse==0.4.3
 tifffile==2023.2.28
-opencv-python--headless==4.5.1.48
+
