@@ -9,7 +9,7 @@ imutils==0.5.4
 lazy_loader==0.1
 networkx==3.0
 numpy==1.24.2
-opencv-python-headless
+opencv-python==4.7.0.72
 packaging==23.0
 Pillow==9.4.0
 python-decouple==3.8
@@ -18,4 +18,3 @@ scikit-image==0.20.0
 scipy==1.10.1
 sqlparse==0.4.3
 tifffile==2023.2.28
-
