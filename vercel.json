@@ -6,7 +6,7 @@
     }],
     "routes":[
         {
-            "src":"/(.*)",
+            "src":"build_files.sh",
             "dest":"backend/wsgi.py"
         }
     ]
