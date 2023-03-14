@@ -25,7 +25,7 @@ SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-
+DATA_UPLOAD_MAX_MEMORY_SIZE = 1048576*20
 ALLOWED_HOSTS = ['*']
 
 SESSION_COOKIE_AGE = 3600
