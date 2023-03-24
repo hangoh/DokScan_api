@@ -106,8 +106,7 @@ def process_image(request):
 
     # Decode the NumPy array to an OpenCV image
     img = cv2.imdecode(image_np, cv2.IMREAD_COLOR)
-    kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
-    img = cv2.filter2D(img, -1, kernel)
+
     return img
 
 
