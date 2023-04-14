@@ -70,11 +70,8 @@ def return_scaned_doc(request):
     warped = cv2.filter2D(warped, -1, kernel)
     # Convert the processed image back to a byte string
     success, buffer = cv2.imencode('.jpeg', warped)
-    image_bytes = buffer.tobytes()
-
-    # Convert the bytes object to a base64-encoded string
-    image_str = base64.b64encode(image_bytes).decode('utf-8')
+    image_bytes = base64.b64encode(buffer)
 
     # Return the byte string as the API response
 
-    return HttpResponse(image_str, content_type='image/jpeg')
+    return HttpResponse(image_bytes, content_type='image/jpeg')

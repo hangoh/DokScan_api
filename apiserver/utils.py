@@ -97,10 +97,15 @@ def four_point_transform(image, pts):
 
 def process_image(request):
     # Get the image data from the request
-    image_file = request.POST.get('image')
+    image_data = request.POST.get('image')
     # Decode the data URL to a binary string
-    image_data = np.frombuffer(image_file.read(), np.uint8)
-    img = cv2.imdecode(image_data, cv2.IMREAD_UNCHANGED)
+    image_binary = base64.b64decode(image_data.split(',')[1])
+
+    # Convert the binary string to a NumPy array
+    image_np = np.frombuffer(image_binary, np.uint8)
+
+    # Decode the NumPy array to an OpenCV image
+    img = cv2.imdecode(image_np, cv2.IMREAD_COLOR)
 
     return img
 
