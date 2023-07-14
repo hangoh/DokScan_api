@@ -8,12 +8,11 @@ class TimezoneMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        print("ip_address for request: {}".format(request.META.get('HTTP_X_FORWARDED_FOR')))
-        print("ip_address for request: {}".format(request.META.get('REMOTE_ADDR')))
-        g = geocoder.ip(request.META.get('HTTP_X_FORWARDED_FOR'))
+        ip_address = request.META.get('REMOTE_ADDR')
+        g = geocoder.ip(ip_address)
 
-        if g and g.timezone:
-            timezone_name = g.timezone
+        if g and g[0].raw:
+            timezone_name = g[0].raw["timezone"]
             timezone_obj = pytz.timezone(timezone_name)
         else:
             # Default timezone if geolocation or timezone not found
@@ -21,7 +20,7 @@ class TimezoneMiddleware:
 
         request.timezone = timezone_obj
         request.time = datetime.now().astimezone(request.timezone)
-        print("client timezone: {}".format(request.time))
+
         response = self.get_response(request)
 
         return response
