@@ -19,3 +19,4 @@ scikit-image==0.20.0
 scipy==1.8
 sqlparse==0.4.3
 tifffile==2023.2.28
+geocoder==1.38.1
