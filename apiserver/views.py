@@ -61,13 +61,29 @@ def return_scaned_doc(request):
 
     # convert the warped image to grayscale, then threshold it
     # to give it that 'black and white' paper effect
-   
+       '''
     warped = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
     T = threshold_local(warped, 11, offset=10, method="gaussian")
     warped = (warped > T).astype("uint8") * 255
     kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
     warped = cv2.filter2D(warped, -1, kernel)
+        '''
+    grayscale_image = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
+    blurred_image = cv2.GaussianBlur(grayscale_image, (5, 5), 0)
+    thresholded_image = cv2.threshold(blurred_image, 127, 255, cv2.THRESH_BINARY)
+    binary_image = np.uint8(thresholded_image)
+
+    # Use a higher threshold value.
+    thresholded_image = cv2.threshold(blurred_image, 150, 255, cv2.THRESH_BINARY)
     
+    # Use a smaller kernel size for the filter.
+    kernel = np.array([[-1, -1, -1], [-1, 3, -1], [-1, -1, -1]])
+    binary_image = cv2.filter2D(binary_image, -1, kernel)
+
+    # Use a different color space.
+    warped = cv2.cvtColor(binary_image, cv2.COLOR_GRAY2LUV)
+    
+    print(warped)
     # Convert the processed image back to a byte string
     success, buffer = cv2.imencode('.jpeg', warped)
     image_bytes = base64.b64encode(buffer)
