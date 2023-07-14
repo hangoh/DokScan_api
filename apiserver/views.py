@@ -21,7 +21,7 @@ def test(request):
 
 @csrf_exempt
 def scan_for_points(request):
-    print(request.META.get('HTTP_X_FORWARDED_FOR'))
+    print("ip_address for request: {}".format(request.META.get('HTTP_X_FORWARDED_FOR')))
     image = process_image(request)
 
     orig = image.copy()
