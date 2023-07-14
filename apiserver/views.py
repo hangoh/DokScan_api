@@ -57,24 +57,23 @@ def return_scaned_doc(request):
     points = request.POST.get("points")
     points = np.array(json.loads(points))
     print(points)
-    img = four_point_transform(img, points.reshape(4, 2))
+    warped = four_point_transform(img, points.reshape(4, 2))
 
     # convert the warped image to grayscale, then threshold it
     # to give it that 'black and white' paper effect
-
-    warped = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    T = threshold_local(warped, 51, offset=10, method="gaussian")
-    warped = (warped > T).astype("uint8") * 255
+    
+    warped_1 = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
+    T = threshold_local(warped_1, 51, offset=10, method="gaussian")
+    warped_2 = (warped_1 > T).astype("uint8") * 255
     kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
-    warped = cv2.filter2D(warped, -1, kernel)
-    warped = cv2.cvtColor(warped, cv2.COLOR_GRAY2RGB)
-
-    w = cv2.bitwise_and(warped, img)
-
+    warped_3 = cv2.filter2D(warped_2, -1, kernel)
+    warped_3 = cv2.cvtColor(warped_3, cv2.COLOR_GRAY2RGB)
+    w = cv2.bitwise_and(warped_3, warped)
+    
     # Convert the processed image back to a byte string
-    success, buffer = cv2.imencode('.jpeg', warped)
+    
+    success, buffer = cv2.imencode('.jpeg', warped_3)
     image_bytes = base64.b64encode(buffer)
-
     # Return the byte string as the API response
 
     return HttpResponse(image_bytes, content_type='image/jpeg')
