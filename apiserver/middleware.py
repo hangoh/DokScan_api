@@ -8,7 +8,8 @@ class TimezoneMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        ip_address = request.META.get('REMOTE_ADDR')
+        ip_address = request.META.get('HTTP_X_FORWARDED_FOR')
+        print("public ip address: {}".format(ip_address))
         g = geocoder.ip(ip_address)
 
         if g and g[0].raw:
@@ -20,6 +21,7 @@ class TimezoneMiddleware:
 
         request.timezone = timezone_obj
         request.time = datetime.now().astimezone(request.timezone)
+        print("client timezone: {}".format(request.time))
 
         response = self.get_response(request)
 
