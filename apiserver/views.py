@@ -75,13 +75,13 @@ def return_scaned_doc(request):
     print("2")
     thresholded_image = cv2.threshold(blurred_image, 127, 255, cv2.THRESH_BINARY)
     print("3")
-    binary_image = np.uint8(thresholded_image)
-    print("4")
+    # binary_image = np.uint8(thresholded_image)
+    # print("4")
     
     # Use a smaller kernel size for the filter.
     kernel = np.array([[-1, -1, -1], [-1, 3, -1], [-1, -1, -1]])
     print("6")
-    binary_image = cv2.filter2D(binary_image, -1, kernel)
+    binary_image = cv2.filter2D(thresholded_image, -1, kernel)
     print("7")
     # Use a different color space.
     warped = cv2.cvtColor(binary_image, cv2.COLOR_GRAY2LUV)
