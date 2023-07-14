@@ -68,20 +68,24 @@ def return_scaned_doc(request):
     kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
     warped = cv2.filter2D(warped, -1, kernel)
     '''
+    print("warped: {}".format(warped))
     grayscale_image = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
+    print("1")
     blurred_image = cv2.GaussianBlur(grayscale_image, (5, 5), 0)
+    print("2")
     thresholded_image = cv2.threshold(blurred_image, 127, 255, cv2.THRESH_BINARY)
+    print("3")
     binary_image = np.uint8(thresholded_image)
-
-    # Use a higher threshold value.
-    thresholded_image = cv2.threshold(blurred_image, 150, 255, cv2.THRESH_BINARY)
+    print("4")
     
     # Use a smaller kernel size for the filter.
     kernel = np.array([[-1, -1, -1], [-1, 3, -1], [-1, -1, -1]])
+    print("6")
     binary_image = cv2.filter2D(binary_image, -1, kernel)
-
+    print("7")
     # Use a different color space.
     warped = cv2.cvtColor(binary_image, cv2.COLOR_GRAY2LUV)
+    print("8")
     
     print(warped)
     # Convert the processed image back to a byte string
