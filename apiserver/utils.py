@@ -4,6 +4,7 @@ import scipy.spatial.distance
 import math
 import base64
 import imutils
+from PIL import Image
 
 def order_points(pts):
     # initialzie a list of coordinates that will be ordered
@@ -90,12 +91,21 @@ def process_image(request):
     image_data = request.POST.get('image')
     # Decode the data URL to a binary string
     image_binary = base64.b64decode(image_data.split(',')[1])
-    # Convert the binary string to a NumPy array
-    image_np = np.frombuffer(image_binary, np.uint8)
-    # Decode the NumPy array to an OpenCV image
-    img = cv2.imdecode(image_np, cv2.IMREAD_COLOR)
+    if is_heic_base64(image_binary):
+        # Open the HEIC image using pillow-heif
+        heic_image = Image.frombytes("RGB", (1, 1), image_binary, "raw", "RGB", 0, 1)
+        # Convert the HEIC image to OpenCV format
+        img = cv2.cvtColor(np.array(heic_image), cv2.COLOR_RGB2BGR)
+    else:
+        # Convert the binary string to a NumPy array
+        image_np = np.frombuffer(image_binary, np.uint8)
+        # Decode the NumPy array to an OpenCV image
+        img = cv2.imdecode(image_np, cv2.IMREAD_COLOR)
     return img
 
+def is_heic_base64(base64_string):
+    signature = base64_string[:8]
+    return signature == b'ftypheic' or signature == b'ftypheix'
 
 def get_4_corner_points_grabcut(img):
     # Resize image to workable size
@@ -187,6 +197,10 @@ def clahe_image(image):
     lab = cv2.merge(lab_planes)
     clahe_bgr = cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)
     return clahe_bgr
+
+
+
+
 
 
 
