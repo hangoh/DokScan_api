@@ -28,7 +28,6 @@ def scan_for_points(request):
     # convert the image to grayscale, blur it, and find edges
     # in the image
 
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(image, (5, 5), 0)
     edged = cv2.Canny(gray, 75, 200)
 
@@ -62,7 +61,6 @@ def return_scaned_doc(request):
     # convert the warped image to grayscale, then threshold it
     # to give it that 'black and white' paper effect
     
-    warped_1 = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
     T = threshold_local(warped_1, 51, offset=10, method="gaussian")
     warped_2 = (warped_1 > T).astype("uint8") * 255
     kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
