@@ -22,7 +22,7 @@ def test(request):
 @csrf_exempt
 def scan_for_points(request):
     image = process_image(request)
-
+    print(image)
     orig = image.copy()
 
     # convert the image to grayscale, blur it, and find edges
