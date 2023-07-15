@@ -57,7 +57,7 @@ def return_scaned_doc(request):
     points = np.array(json.loads(points))
     print(points)
     warped = four_point_transform(img, points.reshape(4, 2))
-
+    print(warped)
     # convert the warped image to grayscale, then threshold it
     # to give it that 'black and white' paper effect
     
