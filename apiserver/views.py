@@ -1,9 +1,8 @@
 from django.shortcuts import render
-from apiserver.utils import order_points, four_point_transform, process_image, reconstruct_points
+from apiserver.utils import  four_point_transform, process_image, get_4_corner_points_traditional_way, get_4_corner_points_grabcut, clahe_image
 from skimage.filters import threshold_local
 import numpy as np
 import cv2
-import imutils
 from django.http import JsonResponse, HttpResponse
 import json
 from django.middleware.csrf import get_token
@@ -21,34 +20,23 @@ def test(request):
 
 @csrf_exempt
 def scan_for_points(request):
-
     image = process_image(request)
-
-    orig = image.copy()
-
-    # convert the image to grayscale, blur it, and find edges
-    # in the image
-
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    gray = cv2.GaussianBlur(image, (5, 5), 0)
-    edged = cv2.Canny(gray, 75, 200)
-
-    # find contours
-    cnts = cv2.findContours(edged.copy(), cv2.RETR_LIST,
-                            cv2.CHAIN_APPROX_SIMPLE)
-    cnts = imutils.grab_contours(cnts)
-    cnts = sorted(cnts, key=cv2.contourArea, reverse=True)[:5]
-
-    # loop over the contours
-    for c in cnts:
-        # approximate the contour
-        peri = cv2.arcLength(c, True)
-        approx = cv2.approxPolyDP(c, 0.02 * peri, True)
-        # if our approximated contour has four points, then we
-        # can assume that we have found our screen
-        if len(approx) == 4:
-            screenCnt = approx
-            return JsonResponse({"result": "positive", "points": screenCnt.tolist()})
+    points = None
+    # different kind of method can help to detect corners in different kind of image, therefore multiple method were use to retrieve points
+    # some might fail and some might success to retrieve points. this depends on image contrast, the complicated level of the background, angle, light refraction and much more
+    
+    # use grabcut method
+    points = get_4_corner_points_grabcut(image) 
+    if points is not None:    
+        return JsonResponse({"result": "positive", "points":points})
+    # traditional way of turn it grayscale bur it and find the edges but with clahe img
+    points = get_4_corner_points_traditional_way(clahe_image(image))
+    if points is not None:    
+        return JsonResponse({"result": "positive", "points":points})
+    # traditional way of turn it grayscale bur it and find the edges
+    points =  get_4_corner_points_traditional_way(image)
+    if points is not None:    
+        return JsonResponse({"result": "positive", "points":points})
     return JsonResponse({"result": "negative"})
 
 
@@ -59,27 +47,21 @@ def return_scaned_doc(request):
     points = np.array(json.loads(points))
     print(points)
     warped = four_point_transform(img, points.reshape(4, 2))
-
     # convert the warped image to grayscale, then threshold it
     # to give it that 'black and white' paper effect
     warped_1 = cv2.cvtColor(warped, cv2.COLOR_BGR2GRAY)
-    T = threshold_local(warped_1, 51, offset=10, method="gaussian")
+    T = threshold_local(warped_1, 21, offset=10, method="gaussian")
     warped_2 = (warped_1 > T).astype("uint8") * 255
     kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
     warped_3 = cv2.filter2D(warped_2, -1, kernel)
-    warped_3 = cv2.cvtColor(warped_3, cv2.COLOR_GRAY2RGB)
+    warped_3 = cv2.cvtColor(warped_3, cv2.COLOR_GRAY2BGR)
+    c = clahe_image(warped_3)
+    warped_c = cv2.cvtColor(c, cv2.COLOR_BGR2GRAY)
     w = cv2.bitwise_and(warped_3, warped)
     # Convert the processed image back to a byte string
-    success, buffer = cv2.imencode('.jpeg', w)
-    image_bytes = base64.b64encode(buffer)
-
-    # Return the byte string as the API response
-
-    return HttpResponse(image_bytes, content_type='image/jpeg')
-
-    
     success, buffer = cv2.imencode('.jpeg', warped_3)
     image_bytes = base64.b64encode(buffer)
+
     # Return the byte string as the API response
 
     return HttpResponse(image_bytes, content_type='image/jpeg')
