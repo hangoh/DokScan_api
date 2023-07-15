@@ -61,8 +61,8 @@ def return_scaned_doc(request):
     # convert the warped image to grayscale, then threshold it
     # to give it that 'black and white' paper effect
     
-    T = threshold_local(warped_1, 51, offset=10, method="gaussian")
-    warped_2 = (warped_1 > T).astype("uint8") * 255
+    T = threshold_local(warped, 51, offset=10, method="gaussian")
+    warped_2 = (warped > T).astype("uint8") * 255
     kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
     warped_3 = cv2.filter2D(warped_2, -1, kernel)
     warped_3 = cv2.cvtColor(warped_3, cv2.COLOR_GRAY2RGB)
