@@ -106,18 +106,8 @@ def process_image(request):
 
     # Decode the NumPy array to an OpenCV image
     img = cv2.imdecode(image_np, cv2.IMREAD_COLOR)
-    lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
-    lab_planes = cv2.split(lab)
-    clahe = cv2.createCLAHE(clipLimit=2.0,tileGridSize=(8,8))
-    lab_planes = list(lab_planes)
-    for i in range(1):
-        lab_planes[0] = clahe.apply(lab_planes[0])
-    lab_planes = tuple(lab_planes)
-    lab = cv2.merge(lab_planes)
-    clahe_bgr = cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)
-    clahe_gray = cv2.cvtColor(clahe_bgr, cv2.COLOR_BGR2GRAY)
 
-    return clahe_gray 
+    return img
 
 def reconstruct_points(p):
     n_p = []
